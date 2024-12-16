@@ -21,7 +21,7 @@ enum Versions {
 @route("/tags")
 namespace Tags {
   @get
-  op listTags(): {
+  op listTags(...QueryParameters.ListQuery, ...QueryParameters.SortQuery): {
     @statusCode statusCode: 200;
     @body tags: Models.Tag[];
   };
@@ -101,6 +101,20 @@ namespace Models {
     tasks: Task[];
     createdAt: utcDateTime;
     updatedAt: utcDateTime;
+  }
+}
+
+namespace QueryParameters {
+  model ListQuery {
+    @query
+    limit?: int32;
+
+    @query
+    offset?: int32;
+  }
+  model SortQuery {
+    @query
+    sort?: string;
   }
 }
 
