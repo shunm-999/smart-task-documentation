@@ -14,39 +14,94 @@ using TypeSpec.Http;
 @versioned(SmartTask.Versions)
 namespace SmartTask;
 
+enum Versions {
+  v1: "1.0",
+}
+
 @route("/tags")
 namespace Tags {
   @get
   op listTags(): {
     @statusCode statusCode: 200;
-    @body tags: Tag[];
+    @body tags: Models.Tag[];
   };
 
   @get
   op getTag(@path id: string): {
     @statusCode statusCode: 200;
-    @body tag: Tag;
+    @body tag: Models.Tag;
   };
 
   @post
-  op createTag(@path id: string, @body tag: Tag): {
+  op createTag(@path id: string, @body tag: Models.Tag): {
     @statusCode statusCode: 201;
-    @body tag: Tag;
+    @body tag: Models.Tag;
   } | {
     @statusCode statusCode: 202;
-    @body tag: Tag;
+    @body tag: Models.Tag;
   };
 
   @put
-  op updateTag(@path id: string, @body tag: Tag): {
+  op updateTag(@path id: string, @body tag: Models.Tag): {
     @statusCode statusCode: 200;
-    @body tag: Tag;
+    @body tag: Models.Tag;
   };
 
   @delete
   op deleteTag(@path id: string): {
     @statusCode statusCode: 204;
   };
+}
+
+namespace Models {
+  model Tag {
+    @visibility(Lifecycle.Read, Lifecycle.Update)
+    id: string;
+
+    name: string;
+    color: int32;
+    createdAt: utcDateTime;
+    updatedAt: utcDateTime;
+  }
+
+  enum Status {
+    inbox: "inbox",
+    nextAction: "nextAction",
+    waiting: "waiting",
+    done: "done",
+  }
+
+  enum Priority {
+    low: "low",
+    medium: "medium",
+    high: "high",
+  }
+
+  model Task {
+    @visibility(Lifecycle.Read, Lifecycle.Update)
+    id: string;
+
+    projectId?: string;
+    title: string;
+    description: string;
+    status: Status;
+    priority: Priority;
+    tags: Tag[];
+    deadline: utcDateTime;
+    createdAt: utcDateTime;
+    updatedAt: utcDateTime;
+  }
+
+  model Project {
+    @visibility(Lifecycle.Read, Lifecycle.Update)
+    id: string;
+
+    name: string;
+    description: string;
+    tasks: Task[];
+    createdAt: utcDateTime;
+    updatedAt: utcDateTime;
+  }
 }
 
 namespace Errors {
@@ -105,57 +160,4 @@ namespace Errors {
     message: string;
     errors: string[];
   }
-}
-
-enum Versions {
-  v1: "1.0",
-}
-
-model Tag {
-  @visibility(Lifecycle.Read, Lifecycle.Update)
-  id: string;
-
-  name: string;
-  color: int32;
-  createdAt: utcDateTime;
-  updatedAt: utcDateTime;
-}
-
-enum Status {
-  inbox: "inbox",
-  nextAction: "nextAction",
-  waiting: "waiting",
-  done: "done",
-}
-
-enum Priority {
-  low: "low",
-  medium: "medium",
-  high: "high",
-}
-
-model Task {
-  @visibility(Lifecycle.Read, Lifecycle.Update)
-  id: string;
-
-  projectId?: string;
-  title: string;
-  description: string;
-  status: Status;
-  priority: Priority;
-  tags: Tag[];
-  deadline: utcDateTime;
-  createdAt: utcDateTime;
-  updatedAt: utcDateTime;
-}
-
-model Project {
-  @visibility(Lifecycle.Read, Lifecycle.Update)
-  id: string;
-
-  name: string;
-  description: string;
-  tasks: Task[];
-  createdAt: utcDateTime;
-  updatedAt: utcDateTime;
 }
