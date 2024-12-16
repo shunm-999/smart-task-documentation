@@ -32,6 +32,9 @@ namespace Tags {
   op createTag(@path id: string, @body tag: Tag): {
     @statusCode statusCode: 201;
     @body tag: Tag;
+  } | {
+    @statusCode statusCode: 202;
+    @body tag: Tag;
   };
 
   @put
@@ -44,6 +47,64 @@ namespace Tags {
   op deleteTag(@path id: string): {
     @statusCode statusCode: 204;
   };
+}
+
+namespace Errors {
+  @error
+  model BadRequest {
+    code: 1;
+    type: "BadRequest";
+    message: string;
+    errors: string[];
+  }
+
+  @error
+  model Unauthorized {
+    code: 2;
+    type: "Unauthorized";
+    message: string;
+    errors: string[];
+  }
+
+  @error
+  model Forbidden {
+    code: 3;
+    type: "Forbidden";
+    message: string;
+    errors: string[];
+  }
+
+  @error
+  model NotFound {
+    code: 4;
+    type: "NotFound";
+    message: string;
+    errors: string[];
+  }
+
+  @error
+  model InternalServerError {
+    code: 5;
+    type: "InternalServerError";
+    message: string;
+    errors: string[];
+  }
+
+  @error
+  model TooManyRequests {
+    code: 6;
+    type: "TooManyRequests";
+    message: string;
+    errors: string[];
+  }
+
+  @error
+  model ServiseMaintenance {
+    code: 7;
+    type: "ServiseMaintenance";
+    message: string;
+    errors: string[];
+  }
 }
 
 enum Versions {
