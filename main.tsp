@@ -10,54 +10,47 @@ using TypeSpec.Http;
 @service({
   title: "Smart Task",
 })
-@server("http://localhost", "Single server endpoint")
+@server("http://localhost:8080", "Single server endpoint")
 @versioned(SmartTask.Versions)
 namespace SmartTask;
 
 enum Versions {
-  v1: "1.0",
+  v1: "1.0.0",
 }
 
-@route("/tags")
-namespace Tags {
-  @get
-  op listTags(...QueryParameters.ListQuery, ...QueryParameters.SortQuery): {
-    @statusCode statusCode: 200;
-    @body tags: Models.Tag[];
-  };
+@route("/v1")
+namespace EndPoints {
+  @tag("Tag")
+  @route("/tags")
+  namespace Tags {
+    @get
+    op list(
+      ...Requests.QueryParameters.ListQuery,
+      ...Requests.QueryParameters.SortQuery,
+    ): Responses.GetResposne<Models.Tag[]>;
 
-  @get
-  op getTag(@path id: string): {
-    @statusCode statusCode: 200;
-    @body tag: Models.Tag;
-  };
+    @get
+    op get(@path id: string): Responses.GetResposne<Models.Tag>;
 
-  @post
-  op createTag(@path id: string, @body tag: Models.Tag): {
-    @statusCode statusCode: 201;
-    @body tag: Models.Tag;
-  } | {
-    @statusCode statusCode: 202;
-    @body tag: Models.Tag;
-  };
+    @post
+    op create(
+      @body request: Requests.Tag.Create,
+    ): Responses.CreateResposne<Models.Tag>;
 
-  @put
-  op updateTag(@path id: string, @body tag: Models.Tag): {
-    @statusCode statusCode: 200;
-    @body tag: Models.Tag;
-  };
+    @put
+    op update(
+      @path id: string,
+      @body request: Requests.Tag.Update,
+    ): Responses.UpdateResposne<Models.Tag>;
 
-  @delete
-  op deleteTag(@path id: string): {
-    @statusCode statusCode: 204;
-  };
+    @delete
+    op delete(@path id: string): Responses.DeleteResposne<Models.Tag>;
+  }
 }
 
 namespace Models {
   model Tag {
-    @visibility(Lifecycle.Read, Lifecycle.Update)
     id: string;
-
     name: string;
     color: int32;
     createdAt: utcDateTime;
@@ -78,9 +71,7 @@ namespace Models {
   }
 
   model Task {
-    @visibility(Lifecycle.Read, Lifecycle.Update)
     id: string;
-
     projectId?: string;
     title: string;
     description: string;
@@ -93,9 +84,7 @@ namespace Models {
   }
 
   model Project {
-    @visibility(Lifecycle.Read, Lifecycle.Update)
     id: string;
-
     name: string;
     description: string;
     tasks: Task[];
@@ -104,74 +93,143 @@ namespace Models {
   }
 }
 
-namespace QueryParameters {
-  model ListQuery {
-    @query
-    limit?: int32;
-
-    @query
-    offset?: int32;
+namespace Requests {
+  namespace Tag {
+    model Create {
+      name: string;
+      color?: int32;
+    }
+    model Update {
+      id: string;
+      name?: string;
+      color?: int32;
+    }
   }
-  model SortQuery {
-    @query
-    sort?: string;
+  namespace QueryParameters {
+    model ListQuery {
+      @query
+      limit?: int32;
+
+      @query
+      offset?: int32;
+    }
+    model SortQuery {
+      @query
+      sort?: string;
+    }
   }
 }
 
-namespace Errors {
-  @error
-  model BadRequest {
-    code: 1;
-    type: "BadRequest";
-    message: string;
-    errors: string[];
-  }
+namespace Responses {
+  alias GetResposne<T> = Models.OkResposne<T> | Models.ErrorReponses;
+  alias CreateResposne<T> = Models.CreateResposne<T> | Models.ErrorReponses;
+  alias UpdateResposne<T> = Models.OkResposne<T> | Models.ErrorReponses;
+  alias DeleteResposne<T> = Models.OkResposne<T> | Models.ErrorReponses;
+  namespace Models {
+    // Success
+    model OkResposne<T> {
+      ...TypeSpec.Http.OkResponse;
+      ...Body<T>;
+    }
+    model CreateResposne<T> {
+      ...TypeSpec.Http.CreatedResponse;
+      ...Body<T>;
+    }
 
-  @error
-  model Unauthorized {
-    code: 2;
-    type: "Unauthorized";
-    message: string;
-    errors: string[];
-  }
+    // Error
+    enum ErrorCode {
+      BadRequest: 1,
+      Unauthorized: 2,
+      Forbidden: 3,
+      NotFound: 4,
+      InternalServerError: 5,
+      TooManyRequests: 6,
+      NotDeletableResource: 7,
+      ServiseMaintenance: 8,
+    }
+    enum ErrorType {
+      BadRequest: "BadRequest",
+      Unauthorized: "Unauthorized",
+      Forbidden: "Forbidden",
+      NotFound: "NotFound",
+      InternalServerError: "InternalServerError",
+      TooManyRequests: "TooManyRequests",
+      NotDeletableResource: "NotDeletableResource",
+      ServiseMaintenance: "ServiseMaintenance",
+    }
 
-  @error
-  model Forbidden {
-    code: 3;
-    type: "Forbidden";
-    message: string;
-    errors: string[];
-  }
+    model ErrorResponse<Code extends ErrorCode, Type extends ErrorType> {
+      code: Code;
+      type: Type;
+      message: string;
+      errors: string[];
+    }
 
-  @error
-  model NotFound {
-    code: 4;
-    type: "NotFound";
-    message: string;
-    errors: string[];
-  }
+    @error
+    model BadRequestResposne {
+      ...TypeSpec.Http.BadRequestResponse;
+      ...ErrorResponse<ErrorCode.BadRequest, ErrorType.BadRequest>;
+    }
 
-  @error
-  model InternalServerError {
-    code: 5;
-    type: "InternalServerError";
-    message: string;
-    errors: string[];
-  }
+    @error
+    model UnauthorizedResposne {
+      ...TypeSpec.Http.UnauthorizedResponse;
+      ...ErrorResponse<ErrorCode.Unauthorized, ErrorType.Unauthorized>;
+    }
 
-  @error
-  model TooManyRequests {
-    code: 6;
-    type: "TooManyRequests";
-    message: string;
-    errors: string[];
-  }
+    @error
+    model ForbiddenResposne {
+      ...TypeSpec.Http.ForbiddenResponse;
+      ...ErrorResponse<ErrorCode.Forbidden, ErrorType.Forbidden>;
+    }
 
-  @error
-  model ServiseMaintenance {
-    code: 7;
-    type: "ServiseMaintenance";
-    message: string;
-    errors: string[];
+    @error
+    model NotFoundResposne {
+      ...TypeSpec.Http.NotFoundResponse;
+      ...ErrorResponse<ErrorCode.NotFound, ErrorType.NotFound>;
+    }
+
+    @error
+    model InternalServerErrorResponse {
+      @statusCode statusCode: 500;
+      ...ErrorResponse<
+        ErrorCode.InternalServerError,
+        ErrorType.InternalServerError
+      >;
+    }
+
+    @error
+    model TooManyRequestsResponse {
+      @statusCode statusCode: 429;
+      ...ErrorResponse<ErrorCode.TooManyRequests, ErrorType.TooManyRequests>;
+    }
+
+    @error
+    model NotDeletableResource {
+      ...TypeSpec.Http.BadRequestResponse;
+      ...ErrorResponse<
+        ErrorCode.NotDeletableResource,
+        ErrorType.NotDeletableResource
+      >;
+    }
+
+    @error
+    model ServiseMaintenance {
+      @statusCode statusCode: 503;
+      ...ErrorResponse<
+        ErrorCode.ServiseMaintenance,
+        ErrorType.ServiseMaintenance
+      >;
+    }
+
+    alias ErrorReponses =
+      | BadRequestResposne
+      | UnauthorizedResposne
+      | ForbiddenResposne
+      | NotFoundResposne
+      | InternalServerErrorResponse
+      | TooManyRequestsResponse
+      | NotDeletableResource
+      | ServiseMaintenance;
   }
 }
