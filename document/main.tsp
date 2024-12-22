@@ -22,29 +22,29 @@ enum Versions {
 namespace EndPoints {
   @tag("Tag")
   @route("/tags")
-  namespace Tags {
+  interface Tags {
     @get
-    op list(
+    list(
       ...Requests.QueryParameters.ListQuery,
       ...Requests.QueryParameters.SortQuery,
     ): Responses.GetResposne<Models.Tag[]>;
 
     @get
-    op get(@path id: string): Responses.GetResposne<Models.Tag>;
+    get(@path id: string): Responses.GetResposne<Models.Tag>;
 
     @post
-    op create(
+    create(
       @body request: Requests.Tag.Create,
     ): Responses.CreateResposne<Models.Tag>;
 
     @put
-    op update(
+    update(
       @path id: string,
       @body request: Requests.Tag.Update,
     ): Responses.UpdateResposne<Models.Tag>;
 
     @delete
-    op delete(@path id: string): Responses.DeleteResposne<Models.Tag>;
+    delete(@path id: string): Responses.DeleteResposne<Models.Tag>;
   }
 }
 
