@@ -22,29 +22,106 @@ enum Versions {
 namespace EndPoints {
   @tag("Tag")
   @route("/tags")
-  interface Tags {
+  namespace Tags {
     @get
-    list(
+    op list(
       ...Requests.QueryParameters.ListQuery,
       ...Requests.QueryParameters.SortQuery,
     ): Responses.GetResposne<Models.Tag[]>;
 
     @get
-    get(@path id: string): Responses.GetResposne<Models.Tag>;
+    op get(@path id: string): Responses.GetResposne<Models.Tag>;
 
     @post
-    create(
+    op create(
       @body request: Requests.Tag.Create,
     ): Responses.CreateResposne<Models.Tag>;
 
     @put
-    update(
+    op update(
       @path id: string,
       @body request: Requests.Tag.Update,
     ): Responses.UpdateResposne<Models.Tag>;
 
     @delete
-    delete(@path id: string): Responses.DeleteResposne<Models.Tag>;
+    op delete(@path id: string): Responses.DeleteResposne<Models.Tag>;
+  }
+
+  @tag("Task")
+  @route("/tasks")
+  namespace Tasks {
+    @get
+    op list(
+      ...Requests.QueryParameters.ListQuery,
+      ...Requests.QueryParameters.SortQuery,
+    ): Responses.GetResposne<Models.Task[]>;
+
+    @get
+    op get(@path id: string): Responses.GetResposne<Models.Task>;
+
+    @post
+    op create(
+      @body request: Requests.Task.Create,
+    ): Responses.CreateResposne<Models.Task>;
+
+    @put
+    op update(
+      @path id: string,
+      @body request: Requests.Task.Update,
+    ): Responses.UpdateResposne<Models.Task>;
+
+    @delete
+    op delete(@path id: string): Responses.DeleteResposne<Models.Task>;
+  }
+
+  @tag("Project")
+  @route("/projects")
+  namespace Projects {
+    @get
+    op list(
+      ...Requests.QueryParameters.ListQuery,
+      ...Requests.QueryParameters.SortQuery,
+    ): Responses.GetResposne<Models.Project[]>;
+
+    @get
+    op get(@path id: string): Responses.GetResposne<Models.Project>;
+
+    @post
+    op create(
+      @body request: Requests.Project.Create,
+    ): Responses.CreateResposne<Models.Project>;
+
+    @put
+    op update(
+      @path id: string,
+      @body request: Requests.Project.Update,
+    ): Responses.UpdateResposne<Models.Project>;
+
+    @delete
+    op delete(@path id: string): Responses.DeleteResposne<Models.Project>;
+
+    @tag("Task")
+    @route("/{projectId}/tasks")
+    namespace Tasks {
+      @get
+      op list(
+        @path projectId: string,
+        ...Requests.QueryParameters.ListQuery,
+        ...Requests.QueryParameters.SortQuery,
+      ): Responses.GetResposne<Models.Task[]>;
+
+      @get
+      op get(
+        @path projectId: string,
+        @path id: string,
+      ): Responses.GetResposne<Models.Task>;
+
+      @delete
+      op delete(
+        @path projectId: string,
+        @path id: string,
+      ): Responses.DeleteResposne<Models.Task>;
+    }
   }
 }
 
@@ -58,16 +135,16 @@ namespace Models {
   }
 
   enum Status {
-    inbox: "inbox",
-    nextAction: "nextAction",
-    waiting: "waiting",
-    done: "done",
+    Inbox: "Inbox",
+    NextAction: "NextAction",
+    Waiting: "Waiting",
+    Done: "Done",
   }
 
   enum Priority {
-    low: "low",
-    medium: "medium",
-    high: "high",
+    Low: "Low",
+    Medium: "Medium",
+    High: "High",
   }
 
   model Task {
@@ -78,7 +155,7 @@ namespace Models {
     status: Status;
     priority: Priority;
     tags: Tag[];
-    deadline: utcDateTime;
+    deadline?: utcDateTime;
     createdAt: utcDateTime;
     updatedAt: utcDateTime;
   }
@@ -103,6 +180,37 @@ namespace Requests {
       id: string;
       name?: string;
       color?: int32;
+    }
+  }
+  namespace Task {
+    model Create {
+      title: string;
+      description: string;
+      status: Models.Status;
+      priority: Models.Priority;
+      tags: Models.Tag[];
+      deadline?: utcDateTime;
+    }
+    model Update {
+      id: string;
+      projectId?: string;
+      title?: string;
+      description?: string;
+      status?: Models.Status;
+      priority?: Models.Priority;
+      tags?: Models.Tag[];
+      deadline?: utcDateTime;
+    }
+  }
+  namespace Project {
+    model Create {
+      name: string;
+      description: string;
+    }
+    model Update {
+      id: string;
+      name?: string;
+      description?: string;
     }
   }
   namespace QueryParameters {
