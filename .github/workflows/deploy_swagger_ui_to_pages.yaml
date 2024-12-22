@@ -36,8 +36,8 @@ jobs:
           path: swagger-ui
       - name: Create Swagger UI Pages
         run: |
-          chmod +x main/.github/workflows/create_swagger_ui_pages.sh
-          ./main/.github/workflows/create_swagger_ui_pages.sh
+          chmod +x main/.github/workflows/create-swagger-ui-pages.sh
+          ./main/.github/workflows/create-swagger-ui-pages.sh
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact

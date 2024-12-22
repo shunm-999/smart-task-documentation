@@ -29,8 +29,8 @@ function extract_highest_version() {
 }
 
 function create_swagger_ui_page() {
-    target_dir=""
     version=""
+    target_dir=""
     if [[ $# -ge 2 ]]; then
         version=$1
         target_dir=main/docs/dist/swagger-ui/$2
@@ -43,15 +43,14 @@ function create_swagger_ui_page() {
     fi
 
     mkdir -p $target_dir
-    html=$(create_html)
-    cat $html >$target_dir/index.html
     cp main/spec/tsp-output/@typespec/openapi3/openapi.$version.yaml $target_dir/swagger.yaml
-    cp -n swagger-ui/dist/* $target_dir
+    cp swagger-ui/dist/* $target_dir
+    create_index_html $target_dir/index.html
 }
 
-function create_html() {
+function create_index_html() {
     html=$(
-        cat <<EOF
+        cat <<EOF >$1
 <!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
 <html lang="en">
