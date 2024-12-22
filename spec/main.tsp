@@ -100,9 +100,8 @@ namespace EndPoints {
     @delete
     op delete(@path id: string): Responses.DeleteResposne<Models.Project>;
 
-    @tag("TaskInProject")
     @route("/{projectId}/tasks")
-    namespace Tasks {
+    namespace ProjectTasks {
       @get
       op list(
         @path projectId: string,
