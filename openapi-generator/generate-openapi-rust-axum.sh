@@ -15,20 +15,22 @@ if [[ $# -ge 2 ]]; then
     esac
 fi
 
+tsp compile .
+
 bash openapi-generator-cli.sh generate \
--i ../spec/tsp-output/@typespec/openapi3/openapi."$version".yaml \
--g rust-axum \
--o build/rust-axum \
---additional-properties packageName=smart_task_openapi_axum,packageVersion="$version"
+    -i ../spec/tsp-output/@typespec/openapi3/openapi."$version".yaml \
+    -g rust-axum \
+    -o build/rust-axum \
+    --additional-properties packageName=smart_task_openapi_axum,packageVersion="$version"
 
 # Add License to Cargo.toml
 # license = "MIT/Apache-2.0"
 
-line_number=$(grep -n edition < build/rust-axum/Cargo.toml | awk '{print $1}' FS=:)
-pre_license=$(head -n "$line_number"  < build/rust-axum/Cargo.toml)
+line_number=$(grep -n edition <build/rust-axum/Cargo.toml | awk '{print $1}' FS=:)
+pre_license=$(head -n "$line_number" <build/rust-axum/Cargo.toml)
 line_number=$((line_number + 1))
-post_license=$(tail -n +"$line_number" < build/rust-axum/Cargo.toml)
+post_license=$(tail -n +"$line_number" <build/rust-axum/Cargo.toml)
 
-echo "$pre_license" > build/rust-axum/Cargo.toml
-echo "license = \"MIT/Apache-2.0\"" >> build/rust-axum/Cargo.toml
-echo "$post_license" >> build/rust-axum/Cargo.toml
+echo "$pre_license" >build/rust-axum/Cargo.toml
+echo "license = \"MIT/Apache-2.0\"" >>build/rust-axum/Cargo.toml
+echo "$post_license" >>build/rust-axum/Cargo.toml

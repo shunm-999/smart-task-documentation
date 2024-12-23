@@ -1,0 +1,7 @@
+
+name: Deploy Rust Crate
+
+on:
+  workflow_dispatch:
+    version:
+      type: 
