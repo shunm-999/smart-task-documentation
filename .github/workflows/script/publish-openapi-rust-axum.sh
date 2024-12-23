@@ -8,28 +8,23 @@ function cargo_publish() {
     popd >/dev/null
 }
 
-version="1.0.0"
+openapi_version="1.0.0"
+rust_crate_version="1.0.0"
 
 if [[ $# -ge 2 ]]; then
-    case "$1" in
-    -v | --version)
-        version="$2"
-        shift 2
-        ;;
-    *)
-        echo "Usage: $0 [-v|--version <version>]"
-        exit 1
-        ;;
-    esac
+    openapi_version=$1
+    rust_crate_version=$2
+elif [[ $# -ge 1 ]]; then
+    openapi_version=$1
 fi
 
-bash tsp_compile.sh
+bash main/.github/workflows/script/tsp-compile.sh
 
-bash openapi-generator-cli.sh generate \
-    -i main/spec/tsp-output/@typespec/openapi3/openapi."$version".yaml \
+bash main/.github/workflows/script/openapi-generator-cli.sh generate \
+    -i main/spec/tsp-output/@typespec/openapi3/openapi."$openapi_version".yaml \
     -g rust-axum \
     -o main/openapi-generator/build/rust-axum \
-    --additional-properties packageName=smart_task_openapi_axum,packageVersion="$version"
+    --additional-properties packageName=smart_task_openapi_axum,packageVersion="$rust_crate_version"
 
 # Add License to Cargo.toml
 # license = "MIT/Apache-2.0"

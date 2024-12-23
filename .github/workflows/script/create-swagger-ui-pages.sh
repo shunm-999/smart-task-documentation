@@ -83,7 +83,7 @@ EOF
     )
 }
 
-bash tsp_compile.sh
+bash main/.github/workflows/script/tsp-compile.sh
 
 versions=$(extract_versions)
 highest_version=$(extract_highest_version $versions)
