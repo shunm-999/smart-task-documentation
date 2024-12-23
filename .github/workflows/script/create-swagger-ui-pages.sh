@@ -2,14 +2,6 @@
 
 set -e
 
-function tsp_compile() {
-    pushd main/spec >/dev/null
-    npm install -g @typespec/compiler
-    npm install
-    tsp compile .
-    popd >/dev/null
-}
-
 function extract_versions() {
     versions=""
     for file in main/spec/tsp-output/@typespec/openapi3/openapi.*.yaml; do
@@ -91,7 +83,7 @@ EOF
     )
 }
 
-tsp_compile
+bash tsp_compile.sh
 
 versions=$(extract_versions)
 highest_version=$(extract_highest_version $versions)

@@ -21,8 +21,8 @@
 set -o pipefail
 
 for cmd in {mvn,jq,curl}; do
-  if ! command -v ${cmd} > /dev/null; then
-    >&2 echo "This script requires '${cmd}' to be installed."
+  if ! command -v ${cmd} >/dev/null; then
+    echo >&2 "This script requires '${cmd}' to be installed."
     exit 1
   fi
 done
@@ -44,7 +44,7 @@ ver=${OPENAPI_GENERATOR_VERSION:-$(latest.tag $ghrepo)}
 jar=${artifactid}-${ver}.jar
 cachedir=${OPENAPI_GENERATOR_DOWNLOAD_CACHE_DIR}
 
-DIR=${cachedir:-"$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"}
+DIR=${cachedir:-"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"}
 
 if [ ! -d "${DIR}" ]; then
   mkdir -p "${DIR}"
@@ -53,7 +53,7 @@ fi
 if [ ! -f ${DIR}/${jar} ]; then
   repo="central::default::https://repo1.maven.org/maven2/"
   if [[ ${ver} =~ ^.*-SNAPSHOT$ ]]; then
-      repo="central::default::https://oss.sonatype.org/content/repositories/snapshots"
+    repo="central::default::https://oss.sonatype.org/content/repositories/snapshots"
   fi
   mvn org.apache.maven.plugins:maven-dependency-plugin:2.9:get \
     -DremoteRepositories=${repo} \
@@ -62,9 +62,9 @@ if [ ! -f ${DIR}/${jar} ]; then
     -Ddest=${DIR}/${jar}
 fi
 
-java -ea                          \
-  ${JAVA_OPTS}                    \
-  -Xms512M                        \
-  -Xmx1024M                       \
-  -server                         \
+java -ea \
+  ${JAVA_OPTS} \
+  -Xms512M \
+  -Xmx1024M \
+  -server \
   -jar ${DIR}/${jar} "$@"

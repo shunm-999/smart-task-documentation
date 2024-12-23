@@ -4,4 +4,23 @@ name: Deploy Rust Crate
 on:
   workflow_dispatch:
     version:
-      type: 
+      type: string
+      required: true
+      default: "1.0.0"
+      description: "The version of the crate to deploy"
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: main
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+        distribution: 'zulu'
+        java-version: '21'
+      
