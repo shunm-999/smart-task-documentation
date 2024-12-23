@@ -3,13 +3,17 @@ name: Deploy Rust Crate
 
 on:
   workflow_dispatch:
-    version:
-      type: string
-      required: true
-      default: "1.0.0"
-      description: "The version of the crate to deploy"
-
-
+    inputs:
+      openapi_version:
+        type: string
+        required: true
+        default: "1.0.0"
+        description: "The version of openapi"
+      rust_crate_version:
+        type: string
+        required: true
+        default: "1.0.0"
+        description: "The version of rust crate"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,6 +25,11 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-        distribution: 'zulu'
-        java-version: '21'
-      
+          distribution: 'zulu'
+          java-version: '21'
+      - name: Publish Rust Crate
+        run: |
+          cargo login ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          chmod +x main/.github/workflows/script/publish-openapi-rust-axum.sh
+          ./main/.github/workflows/script/publish-openapi-rust-axum.sh
+          
