@@ -31,5 +31,5 @@ jobs:
         run: |
           cargo login ${{ secrets.CARGO_REGISTRY_TOKEN }}
           chmod +x main/.github/workflows/script/publish-openapi-rust-axum.sh
-          ./main/.github/workflows/script/publish-openapi-rust-axum.sh
+          ./main/.github/workflows/script/publish-openapi-rust-axum.sh ${{ inputs.openapi_version }} ${{ inputs.rust_crate_version }}
           
