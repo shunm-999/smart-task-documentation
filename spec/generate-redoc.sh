@@ -18,8 +18,8 @@ fi
 
 tsp compile .
 
-echo "You can view documentation in http://localhost"
+echo "You can view documentation in http://localhost:8080"
 
-docker run -it --rm -p 80:80 \
+docker run -it --rm -p 8080:80 \
     -v $(pwd)/tsp-output/@typespec/openapi3/openapi.${version}.yaml:/usr/share/nginx/html/openapi.yaml \
     -e SPEC_URL=openapi.yaml redocly/redoc

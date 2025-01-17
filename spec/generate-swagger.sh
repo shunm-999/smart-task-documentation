@@ -18,8 +18,8 @@ fi
 
 tsp compile .
 
-echo "You can view documentation in http://localhost"
+echo "You can view documentation in http://localhost:8080"
 
-docker run -it --rm -p 80:8080 \
+docker run -it --rm -p 8080:8080 \
     -v $(pwd)/tsp-output/@typespec/openapi3/openapi.${version}.yaml:/openapi.yaml \
     -e SWAGGER_JSON=/openapi.yaml swaggerapi/swagger-ui
