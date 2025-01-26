@@ -16,6 +16,7 @@ namespace SmartTask;
 
 enum Versions {
   v1: "1.0.0",
+  v1_1: "1.1.0",
 }
 
 @route("/v1")
@@ -251,7 +252,10 @@ namespace Responses {
       NotFound: 4,
       InternalServerError: 5,
       TooManyRequests: 6,
+
+      @removed(Versions.v1_1)
       NotDeletableResource: 7,
+
       ServiseMaintenance: 8,
     }
     enum ErrorType {
@@ -261,7 +265,10 @@ namespace Responses {
       NotFound: "NotFound",
       InternalServerError: "InternalServerError",
       TooManyRequests: "TooManyRequests",
+
+      @removed(Versions.v1_1)
       NotDeletableResource: "NotDeletableResource",
+
       ServiseMaintenance: "ServiseMaintenance",
     }
 
@@ -311,6 +318,7 @@ namespace Responses {
       ...ErrorResponse<ErrorCode.TooManyRequests, ErrorType.TooManyRequests>;
     }
 
+    @removed(Versions.v1_1)
     @error
     model NotDeletableResource {
       ...TypeSpec.Http.BadRequestResponse;
@@ -336,7 +344,6 @@ namespace Responses {
       | NotFoundResposne
       | InternalServerErrorResponse
       | TooManyRequestsResponse
-      | NotDeletableResource
       | ServiseMaintenance;
   }
 }
