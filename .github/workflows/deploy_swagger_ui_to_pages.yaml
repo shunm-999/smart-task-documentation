@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - spec/**
+      - .github/workflows/deploy_swagger_ui_to_pages.yaml
+      - .github/workflows/script/create-swagger-ui-pages.sh
   workflow_dispatch:
 
 permissions:

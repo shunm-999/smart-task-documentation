@@ -17,7 +17,7 @@ function extract_highest_version() {
         exit 1
     fi
     versions=$1
-    highest_version=$(echo $versions | sort | tail -n 1)
+    highest_version=$(echo -e $versions | sort -V | tail -n 1)
     echo $highest_version
 }
 
