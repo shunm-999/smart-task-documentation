@@ -18,6 +18,7 @@ enum Versions {
   v1: "1.0.0",
   v1_1: "1.1.0",
   v1_2: "1.2.0",
+  v1_3: "1.3.0",
 }
 
 @route("/v1")
@@ -186,7 +187,6 @@ namespace Requests {
       color?: int32;
     }
     model Update {
-      id: string;
       name?: string;
       color?: int32;
     }
@@ -201,7 +201,6 @@ namespace Requests {
       deadline?: utcDateTime;
     }
     model Update {
-      id: string;
       projectId?: string;
       title?: string;
       description?: string;
@@ -217,7 +216,6 @@ namespace Requests {
       description: string;
     }
     model Update {
-      id: string;
       name?: string;
       description?: string;
     }
