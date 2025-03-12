@@ -17,6 +17,7 @@ namespace SmartTask;
 enum Versions {
   v1: "1.0.0",
   v1_1: "1.1.0",
+  v1_2: "1.2.0",
 }
 
 @route("/v1")
@@ -134,7 +135,15 @@ namespace Models {
     updatedAt: utcDateTime;
   }
 
+  @added(Versions.v1_2)
   enum Status {
+    Todo: "Todo",
+    InProgress: "InProgress",
+    Done: "Done",
+  }
+
+  @removed(Versions.v1_2)
+  enum OldStatus {
     Inbox: "Inbox",
     NextAction: "NextAction",
     Waiting: "Waiting",
